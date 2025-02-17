@@ -136,20 +136,36 @@ while rounds_played < num_rounds:
 
     print(rounds_heading)
 
-    # randomly choose from the rps list (excluding the exit code)
-    comp_choice = random.choice(rps_list[:-1])
-    print("Computer choice", comp_choice)
-
+    #
     user_choice = string_checker("Choose: ", rps_list)
-    print("you chose", user_choice)
+    # print("you chose", user_choice)
 
     if user_choice == "xxx":
         break
 
-    # adjust game lost / game tied counters and add results to game history
+    # randomly choose from the rps list (excluding the exit code)
+    comp_choice = random.choice(rps_list[:-1])
+    print("Computer choice", comp_choice)
 
     result = rps_compare(user_choice, comp_choice)
-    print(f"{user_choice} vs {comp_choice}, {result}")
+
+    # adjust game lost / game tied counters and add results to game history
+    if result == "tie":
+        rounds_tied += 1
+        feedback = "👔👔 It's a tie! 👔👔"
+    elif result == "lose":
+        rounds_lost += 1
+        feedback = "😔😔 You lose. 😔😔"
+    else:
+        feedback = "🎊🎊 You Won. 🎊🎊"
+
+    # set up round feedback and output it user.
+    # add it to the game history list (include the round number)
+    round_feedback = f"{user_choice} vs {comp_choice}, {feedback}"
+    history_item = f"Round: {rounds_played + 1} - {round_feedback}"
+
+    print(round_feedback)
+    game_history.append(history_item)
 
     rounds_played += 1
 
@@ -157,4 +173,33 @@ while rounds_played < num_rounds:
     if mode == "infinite":
         num_rounds += 1
 
+# game loop ends here
+
 # Game history / statistics area
+
+if rounds_played > 0:
+    # calculate statistics
+    rounds_won = rounds_played - rounds_tied - rounds_lost
+    percent_won = rounds_won / rounds_played * 100
+    percent_lost = rounds_lost / rounds_played * 100
+    percent_tied = 100 - percent_won - percent_lost
+
+    # output game statistics
+    print("📊📊📊 Game Statistics 📊📊📊")
+    print(f"🎊 Won: {percent_won:.2f} \t"
+          f"😔 Lost: {percent_lost:.2f} \t"
+          f"👔 Tied: {percent_tied:.2f} \t")
+
+    # ask the user if they want to see their game history and output it if requested
+    see_history = string_checker("\nDo you want to see your game history? ")
+    if see_history == "yes":
+        for item in game_history:
+            print(item)
+
+    print()
+    print("👍👍👍 Thanks for playing 👍👍👍")
+
+else:
+    print("🐔🐔🐔 Oops - You chickened out! 🐔🐔🐔")
+
+
